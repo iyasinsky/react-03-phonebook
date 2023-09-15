@@ -3,6 +3,8 @@ import { GlobalStyle } from 'helpers/GlobalStyle';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Contacts } from './Contacts/Contacts';
 
+const LS_KEY = 'contacts_data';
+
 export class App extends Component {
   state = {
     contacts: [
@@ -13,6 +15,20 @@ export class App extends Component {
     ],
     filter: '',
   };
+
+  componentDidMount() {
+    const savedContacts = localStorage.getItem(LS_KEY);
+
+    if (savedContacts) {
+      this.setState({ contacts: JSON.parse(savedContacts) });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts.length !== this.state.contacts.length) {
+      localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts));
+    }
+  }
 
   addNewContact = newContact => {
     this.isContactExist(newContact);
